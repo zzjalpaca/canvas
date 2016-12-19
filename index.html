@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>canvas</title>
+    <style media="screen">
+        html, body{
+            margin: 0;
+            padding: 0;
+        }
+        :root{
+            --base: #34A34F;
+        }
+        label{
+            font-size: 30px;
+            color: var(--base);
+        }
+
+    </style>
+</head>
+<body>
+    <label for="lineWidth">lineWidth:</label>
+    <input type="range" name="lineWidth" value="10" min="0" max="100" step="5">
+    <label for="base">Base Color</label>
+    <input type="color" name="base" value="#ffc600">
+
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext("2d");
+        var inputs = document.querySelectorAll('input');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        ctx.strokeStyle = '#b1350c';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = document.querySelector('input[name="lineWidth"]').value;
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let hue = 0;
+        let direction = true;
+        // draw
+        function draw(e){
+            if(!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing=true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        });
+        canvas.addEventListener('mouseup', () => isDrawing=false);
+        canvas.addEventListener('mouseout', () => isDrawing=false);
+        // change the lineWidth or color
+        function handleUpdate() {
+            ctx.lineWidth = document.querySelector('input[name="lineWidth"]').value;
+            ctx.strokeStyle = document.querySelector('input[name="base"]').value;
+            document.documentElement.style.setProperty(`--${this.name}`, this.value);
+        }
+
+        inputs.forEach(input => input.addEventListener('change', handleUpdate));
+
+
+
+
+    </script>
+</body>
+</html>
